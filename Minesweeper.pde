@@ -11,6 +11,10 @@ void setup () {
   textAlign(CENTER, CENTER);
   // make the manager
   Interactive.make( this );
+  initGame();
+}
+
+void initGame() {
   buttons= new MSButton[NUM_ROWS][NUM_COLS];
   for (int i=0; i<NUM_ROWS; i++) {
     for (int q=0; q<NUM_COLS; q++) {
@@ -18,9 +22,12 @@ void setup () {
     }
   }
   //end of mysterious setup code
-
   isLost=false;
   hasSetMines=false;
+}
+
+void keyPressed() {
+  if (isLost||isWon())initGame();
 }
 
 public void setMines(int x, int y) {
@@ -42,7 +49,7 @@ public void draw () {
 }
 public boolean isWon()
 {
-  if(isLost)return false;
+  if (isLost)return false;
   for (int x=0; x<NUM_ROWS; x++) {
     for (int y=0; y<NUM_ROWS; y++) {
       if (buttons[x][y].unClicked()&&!mines.contains(buttons[x][y]))return false;
@@ -54,12 +61,16 @@ public void displayLosingMessage() {
   fill(255, 255, 255);
   textSize(100);
   text("You Lose", 300, 100);
+  textSize(30);
+  text("Press Any Key to Play Again!", 300, 180);
   textSize(10);
 }
 public void displayWinningMessage() {
   fill(155, 155, 255);
   textSize(100);
   text("You Win!", 300, 200);
+  textSize(30);
+  text("Press Any Key to Play Again!", 300, 180);
   textSize(10);
 }
 public boolean isValid(int r, int c) {
@@ -133,7 +144,7 @@ public class MSButton {
 
   public void draw () 
   {    
-    if (isLost) if(mines.contains(this))clicked=true;  
+    if (isLost) if (mines.contains(this))clicked=true;  
     if ( clicked && !flagged && mines.contains(this) ) 
       fill(255, 0, 0);
     else if (clicked && !flagged)
