@@ -7,7 +7,7 @@ private ArrayList <MSButton> mines = new ArrayList<MSButton>(); //ArrayList of j
 public boolean isLost; 
 
 void setup () {
-  size(600, 600);
+  size(601, 601);
   textAlign(CENTER, CENTER);
   // make the manager
   Interactive.make( this );
@@ -113,7 +113,7 @@ public class MSButton {
     } else if (mines.contains(this)) {
       isLost=true;
     } else if (countMines(myRow, myCol)>0) {
-      myLabel=String.valueOf(countMines(myRow, myCol));
+      setLabel(countMines(myRow, myCol));
     } else {
       mouseButton=LEFT;
       if (isValid(myRow+1, myCol) && buttons[myRow+1][myCol].unClicked())  buttons[myRow+1][myCol].mousePressed();
