@@ -5,20 +5,28 @@ public boolean hasSetMines;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> mines = new ArrayList<MSButton>(); //ArrayList of just the minesweeper buttons that are mined
 public boolean isLost; 
-
+int timekeep;
 void setup () {
-  size(601, 601);
+  size(801, 601);
   textAlign(CENTER, CENTER);
-  // make the manager
-  Interactive.make( this );
-  initGame();
-}
-
-void initGame() {
+  Interactive.make(this);
   buttons= new MSButton[NUM_ROWS][NUM_COLS];
   for (int i=0; i<NUM_ROWS; i++) {
     for (int q=0; q<NUM_COLS; q++) {
       buttons[i][q]=new MSButton(i, q);
+    }
+  }
+  initGame();
+}
+
+void initGame() {
+  timekeep=millis();
+  // make the manager
+  Interactive.make( this );
+  mines = new ArrayList<MSButton>();
+  for (int i=0; i<NUM_ROWS; i++) {
+    for (int q=0; q<NUM_COLS; q++) {
+      buttons[i][q].refresh();
     }
   }
   //end of mysterious setup code
@@ -43,9 +51,15 @@ public void setMines(int x, int y) {
 }
 
 public void draw () {
-  background( 0 );
-  if (isWon() == true)
-    displayWinningMessage();
+  background(100, 200, 50);
+  textSize(38);
+  fill(0);
+  if (!isWon()&&!isLost) {
+    text("Time: "+(millis()-timekeep)/1000, 700, 30);
+  } else { 
+    text("Time: "+(timekeep/1000), 700, 30);
+  }
+  textSize(14);
 }
 public boolean isWon()
 {
@@ -70,7 +84,7 @@ public void displayWinningMessage() {
   textSize(100);
   text("You Win!", 300, 200);
   textSize(30);
-  text("Press Any Key to Play Again!", 300, 180);
+  text("Press Any Key to Play Again!", 300, 280);
   textSize(10);
 }
 public boolean isValid(int r, int c) {
@@ -109,8 +123,14 @@ public class MSButton {
     Interactive.add( this ); // register it with the manager
   }
 
+  public void refresh() {
+    flagged=clicked=false;
+    myLabel="";
+  }
+
   // called by manager
   public void mousePressed () {
+    if (clicked &&!flagged)mouseButton=LEFT;
     if (!hasSetMines) {
       setMines(myRow, myCol);
       hasSetMines=true;
@@ -123,6 +143,7 @@ public class MSButton {
       }
     } else if (mines.contains(this)) {
       isLost=true;
+      timekeep=millis()-timekeep;
     } else if (countMines(myRow, myCol)>0) {
       setLabel(countMines(myRow, myCol));
     } else {
@@ -136,6 +157,9 @@ public class MSButton {
       if (isValid(myRow-1, myCol+1) && buttons[myRow-1][myCol+1].unClicked()) buttons[myRow-1][myCol+1].mousePressed();
       if (isValid(myRow-1, myCol-1) && buttons[myRow-1][myCol-1].unClicked()) buttons[myRow-1][myCol-1].mousePressed();
     }
+    if (isWon()) {
+      timekeep=millis()-timekeep;
+    }
   }
 
   public boolean unClicked() {
@@ -145,13 +169,15 @@ public class MSButton {
   public void draw () 
   {    
     if (isLost) if (mines.contains(this))clicked=true;  
-    if ( clicked && !flagged && mines.contains(this) ) 
+    if ( clicked && !flagged && mines.contains(this) ) { 
       fill(255, 0, 0);
-    else if (clicked && !flagged)
+    } else if (clicked && !flagged) {
       fill( 150, 100, 50 );
-    else 
-    fill( 100, 200, 50 );
+    } else {
+      fill( 100, 200, 50 );
+    }
     rect(x, y, width, height);
+
     if (flagged) {
       fill(0);
       rect(x+(width/6), y+(width/4), width*.1, height*.7);
@@ -163,16 +189,13 @@ public class MSButton {
     if (isLost && myRow==NUM_ROWS-1 && myCol==NUM_COLS-1)displayLosingMessage();
     if (isWon() && myRow==NUM_ROWS-1 && myCol==NUM_COLS-1)displayWinningMessage();
   }
-  public void setLabel(String newLabel)
-  {
+  public void setLabel(String newLabel) {
     myLabel = newLabel;
   }
-  public void setLabel(int newLabel)
-  {
+  public void setLabel(int newLabel) {
     myLabel = ""+ newLabel;
   }
-  public boolean isFlagged()
-  {
+  public boolean isFlagged() {
     return flagged;
   }
 }
