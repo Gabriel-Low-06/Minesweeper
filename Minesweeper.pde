@@ -8,10 +8,10 @@ public boolean isLost;
 int HighScore;
 int timekeep;
 void setup () {
-  HighScore=Integer.MAX_VALUE;
+  Interactive.make(this);
+  HighScore=200000000;
   size(801, 601);
   textAlign(CENTER, CENTER);
-  Interactive.make(this);
   buttons= new MSButton[NUM_ROWS][NUM_COLS];
   for (int i=0; i<NUM_ROWS; i++) {
     for (int q=0; q<NUM_COLS; q++) {
@@ -24,7 +24,6 @@ void setup () {
 void initGame() {
   timekeep=millis();
   // make the manager
-  Interactive.make( this );
   mines = new ArrayList<MSButton>();
   for (int i=0; i<NUM_ROWS; i++) {
     for (int q=0; q<NUM_COLS; q++) {
@@ -166,7 +165,7 @@ public class MSButton {
     }
     if (isWon()) {
       timekeep=millis()-timekeep;
-      if(timekeep/1000<HighScore)HighScore=timekeep/1000;
+      if (timekeep/1000<HighScore)HighScore=timekeep/1000;
     }
   }
 
