@@ -5,8 +5,10 @@ public boolean hasSetMines;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> mines = new ArrayList<MSButton>(); //ArrayList of just the minesweeper buttons that are mined
 public boolean isLost; 
+int HighScore;
 int timekeep;
 void setup () {
+  HighScore=Integer.MAX_VALUE;
   size(801, 601);
   textAlign(CENTER, CENTER);
   Interactive.make(this);
@@ -59,6 +61,11 @@ public void draw () {
   } else { 
     text("Time: "+(timekeep/1000), 700, 30);
   }
+  fill(100, 100, 200);
+  textSize(30);
+  text("High Score:", 700, 90);
+  text(HighScore, 700, 130);
+
   textSize(14);
 }
 public boolean isWon()
@@ -141,7 +148,7 @@ public class MSButton {
       if (!flagged) {
         clicked=false;
       }
-    } else if (mines.contains(this)) {
+    } else if (mines.contains(this) &&!flagged) {
       isLost=true;
       timekeep=millis()-timekeep;
     } else if (countMines(myRow, myCol)>0) {
@@ -159,6 +166,7 @@ public class MSButton {
     }
     if (isWon()) {
       timekeep=millis()-timekeep;
+      if(timekeep/1000<HighScore)HighScore=timekeep/1000;
     }
   }
 
