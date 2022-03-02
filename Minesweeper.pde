@@ -56,9 +56,9 @@ public void draw () {
   textSize(38);
   fill(0);
   if (!isWon()&&!isLost) {
-    text("Time: "+(millis()-timekeep)/1000, 700, 30);
+    text("Time: "+(int)((millis()-timekeep)/1000), 700, 30);
   } else { 
-    text("Time: "+(timekeep/1000), 700, 30);
+    text("Time: "+(int)(timekeep/1000), 700, 30);
   }
   fill(100, 100, 200);
   textSize(30);
