@@ -68,28 +68,37 @@ void mouseReleased() {
 }
 public void draw () {
   background(theme);
-  textSize(38);
-  fill(0);
+  fill(150, 100, 50);
+  //strokeWeight(1);
+  //fill(196, 180, 84);
   if (!isWon()&&!isLost) {
     ScoreNow=(millis()-timekeep)/1000;
-  }     
-  text("Time: "+(int)(ScoreNow), 700, 30);
-  fill(100, 100, 200);
-  textSize(30);
-  text("Pers. Record:", 700, 90);
-  text(HighScore+"s", 700, 130);
-  textSize(14);
-  textSize(24);
-  fill(205, 0, 255);
-  text("Difficulty Slider:", 700, 180);
+  }
+  for (int i=0; i<4; i++) {
+    textSize(30);
+    text("Timer: "+(int)(ScoreNow), 680, 30);
+    text("Pers. Record:", 700, 90);
+    text(HighScore+"s", 700, 130);
+    textSize(24);
+    text("Difficulty Slider:", 700, 180);
+    translate(1, 1);
+    if (i>1) {
+      fill(196, 180, 84);
+    }
+  }
+  translate(-4, -4);
+  
+  strokeWeight(3);
+  stroke(196, 180, 84);
   fill(255);
   rect(610, 210, 180, 14);
   fill(0);
   rect(560+(Level*140), 205, 25, 25);
-  if (mousePressed&& mouseX>(560+(Level*140)) && mouseX<(585+(Level*140))) {
-    Level=constrain((mouseX-572.5)/(float)140,.35,1.5);
+  if (mousePressed&& mouseX>(545+(Level*140)) && mouseX<(600+(Level*140))) {
+    Level=constrain((mouseX-572.5)/(float)140, .35, 1.5);
     levelSelecting = true;
   }
+  strokeWeight(1);stroke(0);
 }
 public boolean isWon()
 {
@@ -177,9 +186,10 @@ public class MSButton {
       isLost=true;
       timekeep=millis()-timekeep;
     } else if (countMines(myRow, myCol)>0) {
+      flagged=false;
+
       setLabel(countMines(myRow, myCol));
     } else {
-      //mouseButton=LEFT;
       if (isValid(myRow+1, myCol) && buttons[myRow+1][myCol].unClicked())  buttons[myRow+1][myCol].mousePressed();
       if (isValid(myRow-1, myCol) && buttons[myRow-1][myCol].unClicked()) buttons[myRow-1][myCol].mousePressed();
       if (isValid(myRow, myCol+1) && buttons[myRow][myCol+1].unClicked()) buttons[myRow][myCol+1].mousePressed();
@@ -219,6 +229,7 @@ public class MSButton {
       rect(x+(width/6), y+(width/6), width*.7, height/3);
     }
     fill(0);
+    textSize(20);
     text(myLabel, x+width/2, y+height/2);
     if (isLost && myRow==NUM_ROWS-1 && myCol==NUM_COLS-1)displayLosingMessage();
     if (isWon() && myRow==NUM_ROWS-1 && myCol==NUM_COLS-1)displayWinningMessage();
@@ -233,5 +244,3 @@ public class MSButton {
     return flagged;
   }
 }
-
-
