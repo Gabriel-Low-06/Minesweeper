@@ -1,8 +1,10 @@
-import de.bezier.guido.*; //completed step 12
-int NUM_ROWS = 15;
-int NUM_COLS = 15;
+import de.bezier.guido.*; 
+float Level = .5;
+int NUM_ROWS = (int)(Level*15);
+int NUM_COLS = (int)(Level*15);
 int theme = color(76, 187, 23);
 public boolean hasSetMines;
+public boolean levelSelecting = false;
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> mines = new ArrayList<MSButton>(); //ArrayList of just the minesweeper buttons that are mined
 public boolean isLost; 
@@ -10,28 +12,33 @@ int HighScore;
 int ScoreNow;
 int timekeep;
 void setup () {
-  Interactive.make(this);
   HighScore=200000000;
   size(801, 601);
   textAlign(CENTER, CENTER);
+  initGame();
+}
+
+void initGame() {
+  Interactive.make(this);
+  timekeep=millis();
+  // make the manager
+  if (millis()>500) {
+    for (int i=0; i<NUM_ROWS; i++) {
+      for (int q=0; q<NUM_COLS; q++) {
+        buttons[i][q].refresh();
+      }
+    }
+  }
+  NUM_ROWS = (int)(Level*15);
+  NUM_COLS = (int)(Level*15);
+  mines = new ArrayList<MSButton>();
   buttons= new MSButton[NUM_ROWS][NUM_COLS];
   for (int i=0; i<NUM_ROWS; i++) {
     for (int q=0; q<NUM_COLS; q++) {
       buttons[i][q]=new MSButton(i, q);
     }
   }
-  initGame();
-}
-
-void initGame() {
-  timekeep=millis();
-  // make the manager
-  mines = new ArrayList<MSButton>();
-  for (int i=0; i<NUM_ROWS; i++) {
-    for (int q=0; q<NUM_COLS; q++) {
-      buttons[i][q].refresh();
-    }
-  }
+  Interactive.setActive(buttons, true);
   //end of mysterious setup code
   isLost=false;
   hasSetMines=false;
@@ -43,7 +50,7 @@ void keyPressed() {
 
 public void setMines(int x, int y) {
   int stillRun=0;
-  while (stillRun<(NUM_ROWS*1.3)) {
+  while (stillRun<(NUM_ROWS*1.3*Level)) {
     int rCol = (int)random(0, NUM_COLS+1);
     int rRow = (int)random(0, NUM_ROWS+1);
     if (isValid(rRow, rCol) && (rRow<x-1 || rRow>x+1 || rCol<y-1 || rCol>y+1) && !mines.contains(buttons[rCol][rRow])) {
@@ -53,6 +60,12 @@ public void setMines(int x, int y) {
   }
 }
 
+void mouseReleased() {
+  if (levelSelecting) {
+    levelSelecting=false;
+    initGame();
+  }
+}
 public void draw () {
   background(theme);
   textSize(38);
@@ -65,8 +78,18 @@ public void draw () {
   textSize(30);
   text("Pers. Record:", 700, 90);
   text(HighScore+"s", 700, 130);
-
   textSize(14);
+  textSize(24);
+  fill(205, 0, 255);
+  text("Difficulty Slider:", 700, 180);
+  fill(255);
+  rect(610, 210, 180, 14);
+  fill(0);
+  rect(560+(Level*140), 205, 25, 25);
+  if (mousePressed&& mouseX>(560+(Level*140)) && mouseX<(585+(Level*140))) {
+    Level=constrain((mouseX-572.5)/(float)140,.35,1.5);
+    levelSelecting = true;
+  }
 }
 public boolean isWon()
 {
@@ -81,9 +104,9 @@ public boolean isWon()
 public void displayLosingMessage() {
   fill(255, 255, 255);
   textSize(100);
-  text("You Lose", 300, 100);
+  text("You Lose", 300, 200);
   textSize(30);
-  text("Press Any Key to Play Again!", 300, 180);
+  text("Press Any Key to Play Again!", 300, 280);
   textSize(10);
 }
 public void displayWinningMessage() {
@@ -133,6 +156,8 @@ public class MSButton {
   public void refresh() {
     flagged=clicked=false;
     myLabel="";
+    Interactive.setActive(this, false);
+    //Interactive.( this ); // register it with the manager
   }
 
   // called by manager
@@ -208,3 +233,5 @@ public class MSButton {
     return flagged;
   }
 }
+
+
