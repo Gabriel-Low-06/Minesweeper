@@ -251,6 +251,7 @@ public class MSButton {
     if (isLost && myRow==NUM_ROWS-1 && myCol==NUM_COLS-1)displayLosingMessage(); 
     //if you've lost or won (and this is the last button being drawn) then show the corresponding end screen
     if (isWon() && myRow==NUM_ROWS-1 && myCol==NUM_COLS-1)displayWinningMessage();
+    
     if (myRow==NUM_ROWS-1 && myCol==NUM_COLS-1 && millis()<28400) {
       textAlign(LEFT);
       background(theme);
@@ -258,8 +259,8 @@ public class MSButton {
       textSize(25);
       pushMatrix();
       translate(400, 300);
-      rotate(constrain((millis()-27000)*.01, 0, Integer.MAX_VALUE));
-      scale(constrain(pow(1.6, (millis()-27000)*.01), 1, Integer.MAX_VALUE));
+      rotate(constrain((millis()-27000)*.01, 0, 8000000));
+      scale(constrain(pow(1.6, (millis()-27000)*.01), 1, 8000000));
       String toPrint = introMessage.substring(0, (int)(constrain(millis()*.020, 0, introMessage.length())));
       if ((millis()/500)%2==0) {
         text(toPrint+"|", -350, -250);
@@ -269,6 +270,7 @@ public class MSButton {
       popMatrix();
       textAlign(CENTER);
     }
+    
   }
   public void setLabel(String newLabel) { //that's basically it, everything else is just simple getters and setters.
     myLabel = newLabel;
