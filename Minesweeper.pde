@@ -12,6 +12,7 @@ int HighScore;
 int ScoreNow;
 int timekeep;
 void setup () {
+  Interactive.make(this);
   HighScore=200000000;
   size(801, 601);
   textAlign(CENTER, CENTER);
@@ -19,7 +20,6 @@ void setup () {
 }
 
 void initGame() {
-  Interactive.make(this);
   timekeep=millis();
   // make the manager
   if (millis()>500) {
@@ -39,7 +39,6 @@ void initGame() {
     }
   }
   Interactive.setActive(buttons, true);
-  //end of mysterious setup code
   isLost=false;
   hasSetMines=false;
 }
@@ -87,18 +86,19 @@ public void draw () {
     }
   }
   translate(-4, -4);
-  
+
   strokeWeight(3);
   stroke(196, 180, 84);
   fill(255);
   rect(610, 210, 180, 14);
   fill(0);
   rect(560+(Level*140), 205, 25, 25);
-  if (mousePressed&& mouseX>(545+(Level*140)) && mouseX<(600+(Level*140))) {
+  if (mousePressed && mouseX>(555+(Level*140)) && mouseX<(590+(Level*140))||levelSelecting) {
     Level=constrain((mouseX-572.5)/(float)140, .35, 1.5);
     levelSelecting = true;
   }
-  strokeWeight(1);stroke(0);
+  strokeWeight(1);
+  stroke(0);
 }
 public boolean isWon()
 {
