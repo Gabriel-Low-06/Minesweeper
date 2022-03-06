@@ -6,12 +6,14 @@ String introMessage = "Welcome to Minesweeper. In a second, you will be shown a 
   +" the areas around the mines, so that they can be removed.\nTo uncover squares, left-click on them. If you think \nsomething is a mine, flag it by right-clicking." 
   +" Some squares \ngive you numbers; these tell you how many adjacent mines \nthere are, and are necessary to find the mines.\nTime is of the essence, so be sure to hurry! "
   +"\nAnd try to avoid being blown up.";
-final int theme = color  (70, 130, 180); //
-public boolean hasSetMines; //stores whether or not you've set the mines yet
-public boolean levelSelecting = false; //stores whether or not you're dragging the difficulty slider
+private int theme = color  (70, 130, 180); //stores the main color theme
+private boolean hasSetMines; //stores whether or not you've set the mines yet
+private boolean onTutorial = true;
+private boolean onOpening = true;
+private boolean levelSelecting = false; //stores whether or not you're dragging the difficulty slider
 private MSButton[][] buttons; //2d array of minesweeper buttons
 private ArrayList <MSButton> mines = new ArrayList<MSButton>(); //ArrayList of just the minesweeper buttons that are mined
-public boolean isLost; //stores... if the game *is lost*
+private boolean isLost; //stores... if the game *is lost*
 int HighScore; //stores high score
 int ScoreNow; //keeps track of the time of the current game
 int timekeep; // variable to track when a given round started (used with scorenow)
@@ -49,6 +51,10 @@ void initGame() {
 
 void keyPressed() {
   if (isLost||isWon())initGame(); //reset the game when you click a key
+  if (onTutorial) {
+    onTutorial=false; 
+    onOpening=false;
+  }
 }
 
 public void setMines(int x, int y) { //sets a bunch of mines at random locations
@@ -75,8 +81,8 @@ void mouseReleased() {
 }
 public void draw () {
   background(theme); //make the background the given color theme
-  if (!isWon()&&!isLost) ScoreNow=(millis()-timekeep)/1000;
-
+  if (!isWon()&&!isLost&&!onTutorial) ScoreNow=(millis()-timekeep)/1000;
+  if(onTutorial)timekeep = millis()-(ScoreNow*1000);
   fill(150, 100, 50); 
   for (int i=0; i<4; i++) { //this whole block of code draws the text with the timer and high score and whatnot, but it does so with fancy 3D font
     textSize(30);
@@ -103,7 +109,21 @@ public void draw () {
     Level=constrain((mouseX-572.5)/(float)140, .35, 1.5);
     levelSelecting = true;
   }
+
+  stroke(0);
   strokeWeight(1); //resets line color and thickness to defaults so it doesn't screw with the rest of the program
+
+  if (mouseX>610 && mouseX<790 && mouseY>500 ) {
+    stroke(255);
+    fill(255);
+    if (mousePressed)onTutorial=true;
+  }
+  text("How \n   To Play", 650, 530); //this little chunk of code controls the "View Tutorial" button
+  textSize(40);
+  text("?", 750, 555);
+  noFill();
+  ellipse(750, 540, 50, 50);
+
   stroke(0);
 }
 public boolean isWon() {
@@ -251,8 +271,8 @@ public class MSButton {
     if (isLost && myRow==NUM_ROWS-1 && myCol==NUM_COLS-1)displayLosingMessage(); 
     //if you've lost or won (and this is the last button being drawn) then show the corresponding end screen
     if (isWon() && myRow==NUM_ROWS-1 && myCol==NUM_COLS-1)displayWinningMessage();
-    
-    if (myRow==NUM_ROWS-1 && myCol==NUM_COLS-1 && millis()<28400) {
+
+    if (myRow==NUM_ROWS-1 && myCol==NUM_COLS-1 && millis()<28400 && onTutorial && onOpening) {
       textAlign(LEFT);
       background(theme);
       fill(255);
@@ -262,15 +282,38 @@ public class MSButton {
       rotate(constrain((millis()-27000)*.01, 0, 8000000));
       scale(constrain(pow(1.6, (millis()-27000)*.01), 1, 8000000));
       String toPrint = introMessage.substring(0, (int)(constrain(millis()*.020, 0, introMessage.length())));
-      if (((int)millis()/500)%2==0) {
+      if ((millis()/500)%2==0) {
         text(toPrint+"|", -350, -250);
       } else {
         text(toPrint, -350, -250);
       }
+      fill(255*sin(millis()*.005), 255*cos(millis()*.003), 20);
+      text("Press Any Key To Start!", -350, 250);
       popMatrix();
       textAlign(CENTER);
+      timekeep = millis();
     }
-    
+    if (millis()>28400 && onOpening) {
+      onTutorial=false;
+      onOpening=false;
+    }
+
+    if (myRow==NUM_ROWS-1 && myCol==NUM_COLS-1 && onTutorial && !onOpening) {
+      fill(0);
+      background(theme);
+      textSize(20);
+      text(introMessage, 400, 200);
+      if (mouseX>10 && mouseX<190 && mouseY<100 ) {
+        stroke(255);
+        fill(255);
+        if (mousePressed)onTutorial=false;
+      }
+      text("Return \n   To Game", 50, 30);
+      textSize(40);
+      text("X", 150, 55);
+      noFill();
+      ellipse(150, 40, 50, 50);
+    }
   }
   public void setLabel(String newLabel) { //that's basically it, everything else is just simple getters and setters.
     myLabel = newLabel;
