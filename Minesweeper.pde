@@ -262,7 +262,7 @@ public class MSButton {
       rotate(constrain((millis()-27000)*.01, 0, 8000000));
       scale(constrain(pow(1.6, (millis()-27000)*.01), 1, 8000000));
       String toPrint = introMessage.substring(0, (int)(constrain(millis()*.020, 0, introMessage.length())));
-      if ((millis()/500)%2==0) {
+      if (((int)millis()/500)%2==0) {
         text(toPrint+"|", -350, -250);
       } else {
         text(toPrint, -350, -250);
